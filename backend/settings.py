@@ -5,7 +5,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-2dib#55s7gu0*z1t@ml1gtxzt!mc&%$=6t)i(=d=wjwmdn!wq&'
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     "triloka-artsnsportsclub.onrender.com",
