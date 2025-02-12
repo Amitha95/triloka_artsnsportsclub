@@ -7,7 +7,12 @@ SECRET_KEY = 'django-insecure-2dib#55s7gu0*z1t@ml1gtxzt!mc&%$=6t)i(=d=wjwmdn!wq&
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "triloka-artsnsportsclub.onrender.com",
+    "localhost",
+    "127.0.0.1"
+]
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
