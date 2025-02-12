@@ -1,60 +1,46 @@
 from rest_framework import viewsets
-from django.http import JsonResponse
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 from django.conf import settings
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
 import os
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from urllib.parse import urljoin
 from .models import Project, GalleryImage, Member
 from .serializers import ProjectSerializer, GalleryImageSerializer, MemberSerializer
 
-
-
-class GalleryImageViewSet(viewsets.ModelViewSet):
-    queryset = GalleryImage.objects.all()
-    serializer_class = GalleryImageSerializer
-
+# Project ViewSet
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
 
-class MemberViewSet(viewsets.ModelViewSet):
-    queryset = Member.objects.all()
-    serializer_class = MemberSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly] # Require authentication
+# Gallery Image API View
+class GalleryImageListView(APIView):
+    permission_classes = [AllowAny]  
 
+    def get(self, request):
+        media_url = settings.MEDIA_URL
+        gallery_images_dir = os.path.join(settings.MEDIA_ROOT, 'gallery_images')
 
-def project_list(request):
-    data = {"projects": [{"id": 1, "name": "Project A"}, {"id": 2, "name": "Project B"}]}
-    return JsonResponse(data)
+        if os.path.isdir(gallery_images_dir):
+            image_files = [f for f in os.listdir(gallery_images_dir) if f.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))]
+            image_urls = [urljoin(media_url, f'gallery_images/{image}') for image in image_files]
+        else:
+            image_urls = []
 
-@csrf_exempt  # Only use this if necessary, otherwise use proper CSRF handling
-def get_gallery_images(request):
-    media_root = settings.MEDIA_ROOT
-    media_url = settings.MEDIA_URL
-    gallery_images_dir = os.path.join(media_root, 'gallery_images')
+        return Response({'images': image_urls})
 
-    # List all valid image files
-    if os.path.isdir(gallery_images_dir):
-        image_files = [f for f in os.listdir(gallery_images_dir) if f.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.bmp'))]
-        # Construct full URLs for the images
-        image_urls = [os.path.join(media_url, 'gallery_images', image) for image in image_files]
-    else:
-        image_urls = []
+# Member Image API View
+class MemberImageListView(APIView):
+    permission_classes = [AllowAny]  
 
-    return JsonResponse({'images': image_urls})
+    def get(self, request):
+        media_url = settings.MEDIA_URL
+        member_images_dir = os.path.join(settings.MEDIA_ROOT, 'member_images')
 
-@csrf_exempt  # Only use if necessary, otherwise use DRF's APIView for better handling
-def get_member_images(request):
-    media_root = settings.MEDIA_ROOT
-    media_url = settings.MEDIA_URL
-    member_images_dir = os.path.join(media_root, 'member_images')
+        if os.path.isdir(member_images_dir):
+            image_files = [f for f in os.listdir(member_images_dir) if f.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))]
+            image_urls = [urljoin(media_url, f'member_images/{image}') for image in image_files]
+        else:
+            image_urls = []
 
-    if os.path.isdir(member_images_dir):
-        image_files = [f for f in os.listdir(member_images_dir) if f.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.bmp'))]
-        image_urls = [os.path.join(media_url, 'member_images', image) for image in image_files]
-    else:
-        image_urls = []
-
-    return JsonResponse({'images': image_urls})
-
+        return Response({'images': image_urls})
