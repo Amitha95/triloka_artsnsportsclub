@@ -5,7 +5,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('api.urls')),  # Include the API URLs
+    path('api/', include('api.urls')),  # Include the API URLs
 ]
 
 # Serve media files in development
