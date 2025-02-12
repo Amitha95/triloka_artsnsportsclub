@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+env/
+db.sqlite3  # Ignore local database
+
+# Django
+/media/
+/staticfiles/  # If collected using collectstatic
+
+# Node/Angular
+frontend/node_modules/
+frontend/dist/  # Built Angular app (don't push)
+
+# Environment & Secrets
+*.env
+*.venv
+.env
+*.log
+ 
